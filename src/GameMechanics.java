@@ -2,6 +2,7 @@ public class GameMechanics {
 
     private static String GAME_PLAYING = "Play";
     private static String GAME_OVER = "Over";
+    private static int MAX_ROUND_NUMBER = 9;
     String game_progress = GAME_PLAYING;
 
     ArrayMethods gameTable = new ArrayMethods();
@@ -9,15 +10,15 @@ public class GameMechanics {
 
     public void startGame() {
 
+        gameTable.clearGameTable();
+        int round_number = 1;
+
         System.out.println("    ---Новая игра!---\n" +
                             "Первый игрок выбирает чем ходить!\n" +
                             "Введите... [X/O]");
-
-        gameTable.clearGameTable();
         char player = userInterface.getPlayer();
-        int round_number = 1;
 
-        while (game_progress == GAME_PLAYING) {
+        while (game_progress.equals(GAME_PLAYING)) {
 
             playerMove(player);
             checkRules(player, round_number);
@@ -50,7 +51,7 @@ public class GameMechanics {
             gameTable.showGameTable();
             System.out.println("Игрок [" + player + "] выиграл!");
             game_progress = GAME_OVER;
-        } else if (round_number == 9) {
+        } else if (round_number == MAX_ROUND_NUMBER) {
             gameTable.showGameTable();
             System.out.println("Ничья!");
             game_progress = GAME_OVER;

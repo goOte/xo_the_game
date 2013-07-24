@@ -25,7 +25,7 @@ public class ArrayMethods {
     }
 
     public boolean checkUserInput(int row, int line) {
-        if (game_table[row][line] == 'X' || game_table[row][line] == 'O') {
+        if (game_table[row][line] != DEFAULT_VALUE) {
             System.out.println("Ячейка уже занята, пожалуйста выберете другую ячейку!");
             return false;
         } else {
@@ -33,12 +33,12 @@ public class ArrayMethods {
         }
     }
 
-    public void acceptUserInput(char player, int row, int line) {
-        game_table[row][line] = player;
+    public void acceptUserInput(char playerChar, int row, int line) {
+        game_table[row][line] = playerChar;
     }
 
-    public boolean checkGameTable(char player) {
-        if (checkDiagonals(player) || checkLines(player) || checkRows(player)) {
+    public boolean checkGameTable(char playerChar) {
+        if (checkDiagonals(playerChar) || checkLines(playerChar) || checkRows(playerChar)) {
             return true;
         }
         else {
@@ -46,10 +46,10 @@ public class ArrayMethods {
         }
     }
 
-    public boolean checkRows(char player) {
+    public boolean checkRows(char playerChar) {
         boolean result = false;
         for (int i=0; i < ROW_LENGTH; i++) {
-            if (game_table[i][0] == player
+            if (game_table[i][0] == playerChar
                     && game_table[i][0] == game_table[i][1]
                     && game_table[i][0] == game_table[i][2]) {
                 result = true;
@@ -63,10 +63,10 @@ public class ArrayMethods {
         return result;
     }
 
-    public boolean checkLines(char player) {
+    public boolean checkLines(char playerChar) {
         boolean result = false;
         for (int j=0; j < LINE_LENGTH; j++) {
-            if (game_table[0][j] == player
+            if (game_table[0][j] == playerChar
                     && game_table[0][j] == game_table[1][j]
                     && game_table[0][j] == game_table[2][j]) {
                 result = true;
@@ -77,13 +77,13 @@ public class ArrayMethods {
         return result;
     }
 
-    public boolean checkDiagonals(char player) {
-        if (game_table[1][1] == player
+    public boolean checkDiagonals(char playerChar) {
+        if (game_table[1][1] == playerChar
                 && game_table[1][1] == game_table[0][0]
                 && game_table[1][1] == game_table[2][2]) {
             return true;
         }
-        else if (game_table[1][1] == player
+        else if (game_table[1][1] == playerChar
                     && game_table[1][1] == game_table[0][2]
                     && game_table[1][1] == game_table[2][0]) {
             return true;

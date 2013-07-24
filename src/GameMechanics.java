@@ -9,7 +9,7 @@ public class GameMechanics {
 
     public void startGame() {
 
-        System.out.println("       Новая игра!\n" +
+        System.out.println("    ---Новая игра!---\n" +
                             "Первый игрок выбирает чем ходить!\n" +
                             "Введите... [X/O]");
 

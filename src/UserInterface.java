@@ -20,6 +20,35 @@ public class UserInterface {
         }
     }
 
+    public boolean toContinue() {
+        String user_input;
+        boolean to_continue;
+
+        System.out.println("\n Хотите сыграть еще?...." +
+                "\n....Ожидание ввода....[Y/N] [Д/Н]?");
+
+        while (true) {
+            Scanner sc = new Scanner(System.in);
+            if(sc.hasNext()) {
+                user_input = sc.next().toLowerCase();
+                if (user_input.equals("y") || user_input.equals("д")) {
+                    to_continue = true;
+                    break;
+                } else  if(user_input.equals("n") || user_input.equals("н")) {
+                    to_continue = false;
+                    break;
+                } else {
+                    System.out.println("Введите [Y/N] или [Д/Н]");
+                }
+            } else {
+                System.out.println("Неверный ввод!");
+
+            }
+        }
+
+        return to_continue;
+    }
+
     public char getPlayer() {
 
         String user_input;

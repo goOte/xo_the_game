@@ -16,6 +16,10 @@ public class GameMechanics {
             System.out.println("Игра против ROBO (*.*)\n");
             humanVsRobo();
         }
+
+        if (userInterface.toContinue()) {
+            startGame();
+        }
     }
 
     public void humanVsRobo() {

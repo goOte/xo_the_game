@@ -1,30 +1,66 @@
 public class GameMechanics {
 
-    private static String GAME_PLAYING = "Play";
-    private static String GAME_OVER = "Over";
     private static int MAX_ROUND_NUMBER = 9;
-    String game_progress = GAME_PLAYING;
 
     ArrayMethods gameTable = new ArrayMethods();
     UserInterface userInterface = new UserInterface();
 
     public void startGame() {
-
         gameTable.clearGameTable();
+        System.out.println("    ---Новая игра!---\n");
+
+        if (userInterface.getMode()) {
+            System.out.println("Игра с другом\n");
+            humanVsHuman();
+        } else {
+            System.out.println("Игра против ROBO (*.*)\n");
+            humanVsRobo();
+        }
+    }
+
+    public void humanVsRobo() {
+
+        char player = userInterface.getPlayer();
         int round_number = 1;
 
-        System.out.println("    ---Новая игра!---\n" +
-                            "Первый игрок выбирает чем ходить!\n" +
-                            "Введите... [X/O]");
-        char player = userInterface.getPlayer();
-
-        while (game_progress.equals(GAME_PLAYING)) {
+        while (true) {
 
             playerMove(player);
-            checkRules(player, round_number);
+            if (checkRules(player, round_number)) {
+                break;
+            }
+            player = switchPlayer(player);
+            round_number++;
+            roboMove(player);
+            if (checkRules(player, round_number)) {
+                break;
+            }
             player = switchPlayer(player);
             round_number++;
         }
+
+    }
+
+    public void humanVsHuman() {
+
+        char player = userInterface.getPlayer();
+        int round_number = 1;
+
+        while (true) {
+
+            playerMove(player);
+            if (checkRules(player, round_number)) {
+                break;
+            }
+            player = switchPlayer(player);
+            round_number++;
+        }
+
+    }
+
+    private void roboMove(char player) {
+        System.out.println("\n.....ROBO [" + player + "] сделал свой ход! (о_-).....\n");
+        gameTable.useRoboBrain(player);
     }
 
     private void playerMove(char player) {
@@ -45,20 +81,22 @@ public class GameMechanics {
         }
     }
 
-    private void checkRules(char player, int round_number) {
+    private boolean checkRules(char player, int round_number) {
 
         if (gameTable.checkGameTable(player)) {
             gameTable.showGameTable();
             System.out.println("Игрок [" + player + "] выиграл!");
-            game_progress = GAME_OVER;
+            return true;
         } else if (round_number == MAX_ROUND_NUMBER) {
             gameTable.showGameTable();
             System.out.println("Ничья!");
-            game_progress = GAME_OVER;
+            return true;
+        } else {
+            return false;
         }
     }
 
-    private char switchPlayer(char prev_player) {
+    public char switchPlayer(char prev_player) {
         char next_player;
         if (prev_player == 'X') {
             next_player = 'O';

@@ -20,6 +20,84 @@ public class UserInterface {
         }
     }
 
+    public boolean getLanMode() {
+
+        String user_input;
+        boolean lan;
+
+        System.out.println("\n Хотите сыграть по сети? (вам нужен IP соперника)...." +
+                "\n....Ожидание ввода....[Y/N] [Д/Н]?");
+
+        while (true) {
+            Scanner sc = new Scanner(System.in);
+            if(sc.hasNext()) {
+                user_input = sc.next().toLowerCase();
+                if (user_input.equals("y") || user_input.equals("д")) {
+                    lan = true;
+                    break;
+                } else  if(user_input.equals("n") || user_input.equals("н")) {
+                    lan = false;
+                    break;
+                } else {
+                    System.out.println("Введите [Y/N] или [Д/Н]");
+                }
+            } else {
+                System.out.println("Неверный ввод!");
+
+            }
+        }
+
+        return lan;
+    }
+
+    public boolean getHost() {
+
+        String user_input;
+        boolean host;
+
+        System.out.println("\n Хотите создать игру?...." +
+                "\n....Ожидание ввода....[Y/N] [Д/Н]?");
+
+        while (true) {
+            Scanner sc = new Scanner(System.in);
+            if(sc.hasNext()) {
+                user_input = sc.next().toLowerCase();
+                if (user_input.equals("y") || user_input.equals("д")) {
+                    host = true;
+                    break;
+                } else  if(user_input.equals("n") || user_input.equals("н")) {
+                    host = false;
+                    break;
+                } else {
+                    System.out.println("Введите [Y/N] или [Д/Н]");
+                }
+            } else {
+                System.out.println("Неверный ввод!");
+
+            }
+        }
+
+        return host;
+    }
+
+    public String getIpAddress() {
+
+        String user_ip_input;
+
+        while (true) {
+            Scanner sc = new Scanner(System.in);
+            if(sc.hasNext()) {
+                user_ip_input = sc.next();
+                break;
+            } else {
+                System.out.println("Неверный ввод!");
+
+            }
+        }
+
+        return user_ip_input;
+    }
+
     public boolean toContinue() {
         String user_input;
         boolean to_continue;

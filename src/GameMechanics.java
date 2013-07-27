@@ -1,25 +1,130 @@
+import java.io.IOException;
+
 public class GameMechanics {
 
     private static int MAX_ROUND_NUMBER = 9;
 
     ArrayMethods gameTable = new ArrayMethods();
     UserInterface userInterface = new UserInterface();
+    InfoSender infoSender = new InfoSender();
+    InfoReceiver infoReceiver = new InfoReceiver();
 
-    public void startGame() {
+    public void startGame() throws IOException {
         gameTable.clearGameTable();
         System.out.println("    ---Новая игра!---\n");
 
         if (userInterface.getMode()) {
             System.out.println("Игра с другом\n");
-            humanVsHuman();
+            if (userInterface.getLanMode()) {
+                System.out.println("Игра по сети\n");
+                lanHumanVsHuman();
+            } else {
+                System.out.println("Игра на одном ПК\n");
+                humanVsHuman();
+                if (userInterface.toContinue()) {
+                    startGame();
+                }
+            }
         } else {
             System.out.println("Игра против ROBO (*.*)\n");
             humanVsRobo();
+            if (userInterface.toContinue()) {
+                startGame();
+            }
         }
 
-        if (userInterface.toContinue()) {
-            startGame();
+    }
+
+    public void lanHumanVsHuman() throws IOException {
+
+        if (userInterface.getHost()) {
+            System.out.println("Вы хост игры, узнайте IP-адрес вашего соперника\n");
+            hostGame();
+        } else {
+            System.out.println("Ожидайте, пока хост введет ваш IP-адрес\n");
+            nonHostGame();
         }
+
+    }
+
+    public void hostGame() throws IOException {
+
+        System.out.println("Введите ваш IP-адрес\n");
+        String my_ip_address = userInterface.getIpAddress();
+        System.out.println("Введите IP-адрес соперника\n");
+        String enemy_ip_address = userInterface.getIpAddress();
+        infoSender.SendInfoIpAddress(enemy_ip_address, my_ip_address);
+
+        System.out.println("Вы успешно подключились к сопернику!\n");
+        String[] player_move_pack;
+        char player = userInterface.getPlayer();
+        char enemy = switchPlayer(player);
+        char test_player;
+        int row, line;
+        infoSender.SendInfoPlayerChar(enemy_ip_address, player);
+        int round_number = 1;
+
+        while (true) {
+
+            lanPlayerMove(player, enemy_ip_address, round_number);
+            if (checkRules(player, round_number)) {
+                break;
+            }
+            round_number++;
+
+            player_move_pack = infoReceiver.ReceiveInfoPlayerMove(round_number);
+            test_player = player_move_pack[0].charAt(0);
+            row = Integer.parseInt(player_move_pack[1]);
+            line = Integer.parseInt(player_move_pack[2]);
+            gameTable.acceptUserInput(test_player, row, line);
+
+            if (checkRules(enemy, round_number)) {
+                break;
+            } else {
+                System.out.println("\nПротивник [" + enemy + "] сделал ход\n");
+            }
+            round_number++;
+        }
+
+    }
+
+    public void nonHostGame() throws IOException {
+
+        String enemy_ip_address = infoReceiver.ReceiveInfoIpAddress();
+
+        System.out.println("Вы успешно подключились к сопернику!\n");
+        char enemy = infoReceiver.ReceiveInfoPlayerChar();
+        char player = switchPlayer(enemy);
+        char test_player;
+        int row, line;
+        String[] player_move_pack;
+        System.out.println("Соперник выбрал [" + enemy + "] , соответственно вы ходите [" + player + "]\n");
+        int round_number = 1;
+
+        while (true) {
+
+            player_move_pack = infoReceiver.ReceiveInfoPlayerMove(round_number);
+            test_player = player_move_pack[0].charAt(0);
+            row = Integer.parseInt(player_move_pack[1]);
+            line = Integer.parseInt(player_move_pack[2]);
+            gameTable.acceptUserInput(test_player, row, line);
+
+
+            if (checkRules(enemy, round_number)) {
+                break;
+            } else {
+                System.out.println("\nПротивник [" + enemy + "] сделал ход\n");
+            }
+            round_number++;
+
+            lanPlayerMove(player, enemy_ip_address, round_number);
+            if (checkRules(player, round_number)) {
+                break;
+            }
+            round_number++;
+        }
+
+
     }
 
     public void humanVsRobo() {
@@ -80,6 +185,25 @@ public class GameMechanics {
             if (gameTable.checkUserInput(row_number, line_number)) {
 
                 gameTable.acceptUserInput(player, row_number, line_number);
+                break;
+            }
+        }
+    }
+
+    private void lanPlayerMove(char player, String ip_address, int port_index) throws IOException {
+
+        System.out.println("Ход игрока [" + player + "]");
+
+        while (true) {
+
+            gameTable.showGameTable();
+            int row_number = userInterface.getRowInput();
+            int line_number = userInterface.getLineInput();
+
+            if (gameTable.checkUserInput(row_number, line_number)) {
+
+                gameTable.acceptUserInput(player, row_number, line_number);
+                infoSender.SendInfoPlayerMove(ip_address, port_index, player, row_number, line_number);
                 break;
             }
         }

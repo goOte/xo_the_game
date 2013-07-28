@@ -38,6 +38,20 @@ public class ArrayMethods {
         System.out.println();
     }
 
+    public char[][] getGameTable() {
+        char[][] get_table = new char[ROW_LENGTH][LINE_LENGTH];
+        for (int i=0; i < ROW_LENGTH; i++) {
+            for (int j = 0; j < LINE_LENGTH; j++) {
+                get_table[i][j] = game_table[i][j];
+            }
+        }
+        return get_table;
+    }
+
+    public void setGame_table(char[][] new_game_table) {
+        game_table = new_game_table;
+    }
+
     public boolean checkUserInput(int row, int line) {
         if (game_table[row][line] != DEFAULT_VALUE) {
             System.out.println("Ячейка уже занята, пожалуйста выберете другую ячейку!");

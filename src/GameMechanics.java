@@ -2,12 +2,12 @@ import java.io.IOException;
 
 public class GameMechanics {
 
-    private static int MAX_ROUND_NUMBER = 9;
-
     ArrayMethods gameTable = new ArrayMethods();
     UserInterface userInterface = new UserInterface();
     InfoSender infoSender = new InfoSender();
     InfoReceiver infoReceiver = new InfoReceiver();
+    GameHistory gameHistory = new GameHistory();
+
 
     public void startGame() throws IOException {
         gameTable.clearGameTable();
@@ -43,6 +43,60 @@ public class GameMechanics {
         } else {
             System.out.println("Ожидайте, пока хост введет ваш IP-адрес\n");
             nonHostGame();
+        }
+
+    }
+
+    public void humanVsRobo() {
+
+        char player = userInterface.getPlayer();
+        int round_number = 0;
+        gameHistory.writeToHistory(gameTable.getGameTable(), round_number);
+
+        while (true) {
+
+            round_number++;
+
+            playerMove(player, round_number);
+            if (checkRules(player, round_number)) {
+                break;
+            }
+
+            player = switchPlayer(player);
+            round_number++;
+
+            roboMove(player, round_number);
+            if (checkRules(player, round_number)) {
+                break;
+            }
+
+            player = switchPlayer(player);
+
+            if (userInterface.askToMoveBack()) {
+                gameTable.setGame_table(gameHistory.getGameHistoryTable(round_number-2));
+                round_number = round_number -2;
+            }
+        }
+
+        if (userInterface.askToShowHistory()) {
+            gameHistory.showWholeHistory(round_number);
+        }
+
+    }
+
+    public void humanVsHuman() {
+
+        char player = userInterface.getPlayer();
+        int round_number = 1;
+
+        while (true) {
+
+            playerMove(player, round_number);
+            if (checkRules(player, round_number)) {
+                break;
+            }
+            player = switchPlayer(player);
+            round_number++;
         }
 
     }
@@ -123,58 +177,18 @@ public class GameMechanics {
             }
             round_number++;
         }
-
-
     }
 
-    public void humanVsRobo() {
-
-        char player = userInterface.getPlayer();
-        int round_number = 1;
-
-        while (true) {
-
-            playerMove(player);
-            if (checkRules(player, round_number)) {
-                break;
-            }
-            player = switchPlayer(player);
-            round_number++;
-            roboMove(player);
-            if (checkRules(player, round_number)) {
-                break;
-            }
-            player = switchPlayer(player);
-            round_number++;
-        }
-
-    }
-
-    public void humanVsHuman() {
-
-        char player = userInterface.getPlayer();
-        int round_number = 1;
-
-        while (true) {
-
-            playerMove(player);
-            if (checkRules(player, round_number)) {
-                break;
-            }
-            player = switchPlayer(player);
-            round_number++;
-        }
-
-    }
-
-    private void roboMove(char player) {
+    private void roboMove(char player, int round_number) {
         System.out.println("\n.....ROBO [" + player + "] сделал свой ход! (о_-).....\n");
         gameTable.useRoboBrain(player);
+        gameHistory.writeToHistory(gameTable.getGameTable(), round_number);
+        gameTable.showGameTable();
     }
 
-    private void playerMove(char player) {
+    private void playerMove(char player, int round_number) {
 
-        System.out.println("Ход игрока [" + player + "]");
+        System.out.println("\nХод игрока [" + player + "]\n");
 
         while (true) {
 
@@ -185,6 +199,9 @@ public class GameMechanics {
             if (gameTable.checkUserInput(row_number, line_number)) {
 
                 gameTable.acceptUserInput(player, row_number, line_number);
+                gameHistory.writeToHistory(gameTable.getGameTable(), round_number);
+                System.out.println("\nИгрок [" + player + "] сделал совой ход\n");
+                gameTable.showGameTable();
                 break;
             }
         }
@@ -211,8 +228,9 @@ public class GameMechanics {
 
     private boolean checkRules(char player, int round_number) {
 
+        final int MAX_ROUND_NUMBER = 9;
+
         if (gameTable.checkGameTable(player)) {
-            gameTable.showGameTable();
             System.out.println("Игрок [" + player + "] выиграл!");
             return true;
         } else if (round_number == MAX_ROUND_NUMBER) {

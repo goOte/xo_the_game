@@ -50,6 +50,66 @@ public class UserInterface {
         return lan;
     }
 
+    public boolean askToMoveBack() {
+
+        String user_input;
+        boolean move_back;
+
+        System.out.println("\n Хотите вернуться на ход назад?" +
+                "\n....Ожидание ввода....[Y/N] [Д/Н]?");
+
+        while (true) {
+            Scanner sc = new Scanner(System.in);
+            if(sc.hasNext()) {
+                user_input = sc.next().toLowerCase();
+                if (user_input.equals("y") || user_input.equals("д")) {
+                    move_back = true;
+                    break;
+                } else  if(user_input.equals("n") || user_input.equals("н")) {
+                    move_back = false;
+                    break;
+                } else {
+                    System.out.println("Введите [Y/N] или [Д/Н]");
+                }
+            } else {
+                System.out.println("Неверный ввод!");
+
+            }
+        }
+
+        return move_back;
+    }
+
+    public boolean askToShowHistory() {
+
+        String user_input;
+        boolean show_history;
+
+        System.out.println("\n Хотите просмотреть историю ходов?" +
+                "\n....Ожидание ввода....[Y/N] [Д/Н]?");
+
+        while (true) {
+            Scanner sc = new Scanner(System.in);
+            if(sc.hasNext()) {
+                user_input = sc.next().toLowerCase();
+                if (user_input.equals("y") || user_input.equals("д")) {
+                    show_history = true;
+                    break;
+                } else  if(user_input.equals("n") || user_input.equals("н")) {
+                    show_history = false;
+                    break;
+                } else {
+                    System.out.println("Введите [Y/N] или [Д/Н]");
+                }
+            } else {
+                System.out.println("Неверный ввод!");
+
+            }
+        }
+
+        return show_history;
+    }
+
     public boolean getHost() {
 
         String user_input;

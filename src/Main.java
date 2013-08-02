@@ -4,7 +4,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        System.out.println("--- Игра Крестики-Нолики ---\n");
+        System.out.println("--- Игра Крестики-Нолики [3x3] ---\n");
 
         GameMechanics newGame = new GameMechanics();
         newGame.startGame();

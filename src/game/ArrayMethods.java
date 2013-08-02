@@ -12,7 +12,7 @@ public class ArrayMethods {
     private int[] line_1_cells = {0, 0, 0, 1, 0, 2};
     private int[] line_2_cells = {1, 0, 1, 1, 1, 2};
     private int[] line_3_cells = {2, 0, 2, 1, 2, 2};
-    private int[] row_1_cells = {0, 0, 1, 0, 2, 1};
+    private int[] row_1_cells = {0, 0, 1, 0, 2, 0};
     private int[] row_2_cells = {0, 1, 1, 1, 2, 1};
     private int[] row_3_cells = {0, 2, 1, 2, 2, 2};
     private int[] diag_1_cells = {0, 0, 1, 1, 2, 2};
@@ -135,6 +135,12 @@ public class ArrayMethods {
             int row_2_index = readRowIndex(2, player_char);
             int diag_1_index = readFirstDiagonalIndex(player_char);
             int diag_2_index = readSecondDiagonalIndex(player_char);
+
+/*
+            System.out.println(line_0_index + " " + line_1_index + " " + line_2_index);
+            System.out.println(row_0_index + " " + row_1_index + " " + row_2_index);
+            System.out.println(diag_1_index + " " + diag_2_index);
+*/
 
             int[] game_table_index = {line_0_index, line_1_index, line_2_index,
                     row_0_index, row_1_index, row_2_index,

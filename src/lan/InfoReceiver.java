@@ -5,121 +5,129 @@ import java.io.*;
 
 public class InfoReceiver {
 
+    private final static int PORT = 1212;
+
     public String ReceiveInfoIpAddress() {
 
         byte data[] = new byte[131072];
-        DatagramSocket dgsocket = null;
+        DatagramSocket datagramSocket = null;
         try {
-            dgsocket = new DatagramSocket(1212);
+            datagramSocket = new DatagramSocket(PORT);
         } catch (SocketException e) {
             e.printStackTrace();
         }
-        DatagramPacket rcvpack;
+        DatagramPacket datagramPacket;
 
         System.out.println("Ожидание соединения.......\n");
-        rcvpack = new DatagramPacket(data, data.length);
+        datagramPacket = new DatagramPacket(data, data.length);
 
-        if (dgsocket != null) {
+        if (datagramSocket != null) {
             try {
-                dgsocket.receive(rcvpack);
+                datagramSocket.receive(datagramPacket);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        String ip_address = new String(rcvpack.getData());
-        ip_address = ip_address.substring(0, rcvpack.getLength());
+        String ipAddress = new String(datagramPacket.getData());
+        ipAddress = ipAddress.substring(0, datagramPacket.getLength());
 
-        System.out.println("*** Вы успешно подключились к " + ip_address + " ***\n");
+        System.out.printf("\n*** Вы успешно подключились к %s ***\n", ipAddress);
 
-        return ip_address;
+        datagramSocket.close();
+
+        return ipAddress;
 
     }
 
     public char ReceiveInfoPlayerChar() {
 
         byte data[] = new byte[131072];
-        DatagramSocket dgsocket = null;
+        DatagramSocket datagramSocket = null;
         try {
-            dgsocket = new DatagramSocket(1213);
+            datagramSocket = new DatagramSocket(PORT);
         } catch (SocketException e) {
             e.printStackTrace();
         }
-        DatagramPacket rcvpack;
+        DatagramPacket datagramPacket;
 
         System.out.println("Ожидание соединения.......\n");
-        rcvpack = new DatagramPacket(data, data.length);
+        datagramPacket = new DatagramPacket(data, data.length);
 
-        if (dgsocket != null) {
+        if (datagramSocket != null) {
             try {
-                dgsocket.receive(rcvpack);
+                datagramSocket.receive(datagramPacket);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        String player_char_str = new String(rcvpack.getData());
-        player_char_str = player_char_str.substring(0, rcvpack.getLength());
+        String playerCharStr = new String(datagramPacket.getData());
+        playerCharStr = playerCharStr.substring(0, datagramPacket.getLength());
 
         System.out.println("Соединение установлено...\n");
 
-        char player_char = player_char_str.charAt(0);
+        char playerChar = playerCharStr.charAt(0);
 
-        return player_char;
+        datagramSocket.close();
+
+        return playerChar;
 
     }
 
-    public String[] ReceiveInfoPlayerMove(int port_index) {
+    public String[] ReceiveInfoPlayerMove() {
 
-        int port = 1214 + port_index;
         byte data[] = new byte[131072];
-        DatagramSocket dgsocket = null;
+        DatagramSocket datagramSocket = null;
         try {
-            dgsocket = new DatagramSocket(port);
+            datagramSocket = new DatagramSocket(PORT);
         } catch (SocketException e) {
             e.printStackTrace();
         }
-        DatagramPacket rcvpack;
+        DatagramPacket datagramPacket;
 
         System.out.println("Ожидание соединения.......\n");
 
-        rcvpack = new DatagramPacket(data, data.length);
+        datagramPacket = new DatagramPacket(data, data.length);
 
-        //Get player_char
-        if (dgsocket != null) {
+        //Get playerChar
+        if (datagramSocket != null) {
             try {
-                dgsocket.receive(rcvpack);
+                datagramSocket.receive(datagramPacket);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        String player_char_str = new String(rcvpack.getData());
-        player_char_str = player_char_str.substring(0, rcvpack.getLength());
+        String playerCharStr = new String(datagramPacket.getData());
+        playerCharStr = playerCharStr.substring(0, datagramPacket.getLength());
 
-        //Get row_number
-        if (dgsocket != null) {
+        //Get rowNumber
+        if (datagramSocket != null) {
             try {
-                dgsocket.receive(rcvpack);
+                datagramSocket.receive(datagramPacket);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        String row_number_str = new String(rcvpack.getData());
-        row_number_str = row_number_str.substring(0, rcvpack.getLength());
+        String rowNumberStr = new String(datagramPacket.getData());
+        rowNumberStr = rowNumberStr.substring(0, datagramPacket.getLength());
 
-        //Get line_number
-        if (dgsocket != null) {
+        //Get lineNumber
+        if (datagramSocket != null) {
             try {
-                dgsocket.receive(rcvpack);
+                datagramSocket.receive(datagramPacket);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        String line_number_str = new String(rcvpack.getData());
-        line_number_str = line_number_str.substring(0, rcvpack.getLength());
+        String lineNumberStr = new String(datagramPacket.getData());
+        lineNumberStr = lineNumberStr.substring(0, datagramPacket.getLength());
 
-        String[] player_move_pack = {player_char_str, row_number_str, line_number_str};
+        String[] playerMovePack = {playerCharStr, rowNumberStr, lineNumberStr};
 
         System.out.println("Соединение установлено...\n");
-        return player_move_pack;
+
+        datagramSocket.close();
+
+        return playerMovePack;
 
     }
 }

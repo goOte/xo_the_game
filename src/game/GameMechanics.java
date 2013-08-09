@@ -5,6 +5,8 @@ import ui.*;
 
 public class GameMechanics {
 
+    final static int MAX_ROUND_NUMBER = 9;
+
     ArrayMethods gameTable = new ArrayMethods();
     UserInterface userInterface = new UserInterface();
     InfoSender infoSender = new InfoSender();
@@ -24,16 +26,14 @@ public class GameMechanics {
             } else {
                 System.out.println("Игра на одном ПК\n");
                 humanVsHuman();
-                if (userInterface.askYesNo("Хотите сыграть еще?....")) {
-                    startGame();
-                }
             }
         } else {
             System.out.println("Игра против ROBO (*.*)\n");
             humanVsRobo();
-            if (userInterface.askYesNo("Хотите сыграть еще?....")) {
-                startGame();
-            }
+        }
+
+        if (userInterface.askYesNo("Хотите сыграть еще?....")) {
+            startGame();
         }
 
     }
@@ -41,10 +41,10 @@ public class GameMechanics {
     public void lanHumanVsHuman() {
 
         if (userInterface.askYesNo("Хотите создать игру?....")) {
-            System.out.println("Вы хост игры, узнайте ваш IP-адрес и вашего соперника\n");
+            System.out.println("Вы хост игры, узнайте IP-адрес вашего соперника\n");
             hostGame();
         } else {
-            System.out.println("Ожидайте, пока хост введет IP-адреса, и создаст игру....\n");
+            System.out.printf("\nОжидайте, пока хост введет ваш IP-адрес (%s), и создаст игру....\n", infoSender.getLocalIpAddress());
             nonHostGame();
         }
 
@@ -53,36 +53,36 @@ public class GameMechanics {
     public void humanVsRobo() {
 
         char player = userInterface.getPlayer();
-        int round_number = 0;
-        gameHistory.writeToHistory(gameTable.getGameTable(), round_number);
+        int roundNumber = 0;
+        gameHistory.writeToHistory(gameTable.getGameTable(), roundNumber);
 
         while (true) {
 
-            round_number++;
+            roundNumber++;
 
-            playerMove(player, round_number);
-            if (checkRules(player, round_number)) {
+            playerMove(player, roundNumber);
+            if (checkRules(player, roundNumber)) {
                 break;
             }
 
-            player = switchPlayer(player);
-            round_number++;
+            player = gameTable.switchPlayer(player);
+            roundNumber++;
 
-            roboMove(player, round_number);
-            if (checkRules(player, round_number)) {
+            roboMove(player, roundNumber);
+            if (checkRules(player, roundNumber)) {
                 break;
             }
 
-            player = switchPlayer(player);
+            player = gameTable.switchPlayer(player);
 
             if (userInterface.askYesNo("Хотите вернуться на ход назад?")) {
-                gameTable.setGame_table(gameHistory.getGameHistoryTable(round_number-2));
-                round_number = round_number -2;
+                gameTable.setGameTable(gameHistory.getGameHistoryTable(roundNumber - 2));
+                roundNumber = roundNumber -2;
             }
         }
 
         if (userInterface.askYesNo("Хотите просмотреть историю ходов?")) {
-            gameHistory.showWholeHistory(round_number);
+            gameHistory.showWholeHistory(roundNumber);
         }
 
     }
@@ -90,155 +90,151 @@ public class GameMechanics {
     public void humanVsHuman() {
 
         char player = userInterface.getPlayer();
-        int round_number = 1;
+        int roundNumber = 1;
 
         while (true) {
 
-            playerMove(player, round_number);
-            if (checkRules(player, round_number)) {
+            playerMove(player, roundNumber);
+            if (checkRules(player, roundNumber)) {
                 break;
             }
-            player = switchPlayer(player);
-            round_number++;
+            player = gameTable.switchPlayer(player);
+            roundNumber++;
         }
 
     }
 
     public void hostGame() {
 
-        System.out.println("Введите ваш IP-адрес\n");
-        String my_ip_address = userInterface.getIpAddress();
         System.out.println("Введите IP-адрес соперника\n");
-        String enemy_ip_address = userInterface.getIpAddress();
-        infoSender.SendInfoIpAddress(enemy_ip_address, my_ip_address);
+        String enemyIpAddress = userInterface.getIpAddress();
+        infoSender.SendInfoIpAddress(enemyIpAddress);
 
         System.out.println("Игра создана...\n");
-        String[] player_move_pack;
+        String[] playerMovePack;
         char player = userInterface.getPlayer();
-        char enemy = switchPlayer(player);
-        char player_char;
+        char enemy = gameTable.switchPlayer(player);
+        char playerChar;
         int row, line;
-        infoSender.SendInfoPlayerChar(enemy_ip_address, player);
-        int round_number = 1;
+        infoSender.SendInfoPlayerChar(enemyIpAddress, player);
+        int roundNumber = 1;
 
         while (true) {
 
-            lanPlayerMove(player, enemy_ip_address, round_number);
-            if (checkRules(player, round_number)) {
+            lanPlayerMove(player, enemyIpAddress);
+            if (checkRules(player, roundNumber)) {
                 break;
             }
             gameTable.showGameTable();
-            round_number++;
+            roundNumber++;
 
-            player_move_pack = infoReceiver.ReceiveInfoPlayerMove(round_number);
-            player_char = player_move_pack[0].charAt(0);
-            row = Integer.parseInt(player_move_pack[1]);
-            line = Integer.parseInt(player_move_pack[2]);
-            gameTable.acceptUserInput(player_char, row, line);
+            playerMovePack = infoReceiver.ReceiveInfoPlayerMove();
+            playerChar = playerMovePack[0].charAt(0);
+            row = Integer.parseInt(playerMovePack[1]);
+            line = Integer.parseInt(playerMovePack[2]);
+            gameTable.acceptUserInput(playerChar, row, line);
 
-            if (checkRules(enemy, round_number)) {
+            if (checkRules(enemy, roundNumber)) {
                 break;
             } else {
-                System.out.println("\nПротивник [" + enemy + "] сделал ход\n");
+                System.out.printf("\n\nПротивник [%s] сделал ход\n", enemy);
             }
-            round_number++;
+            roundNumber++;
         }
 
     }
 
     public void nonHostGame() {
 
-        String enemy_ip_address = infoReceiver.ReceiveInfoIpAddress();
+        String enemyIpAddress = infoReceiver.ReceiveInfoIpAddress();
 
-        System.out.println("IP-адреса получены. Игра создана...\n");
+        System.out.println("IP-адрес получен. Игра создана...\n");
         char enemy = infoReceiver.ReceiveInfoPlayerChar();
-        char player = switchPlayer(enemy);
-        char player_char;
+        char player = gameTable.switchPlayer(enemy);
+        char playerChar;
         int row, line;
-        String[] player_move_pack;
-        System.out.println("Соперник выбрал [" + enemy + "] , соответственно вы ходите [" + player + "]\n");
-        int round_number = 1;
+        String[] playerMovePack;
+        System.out.printf("Соперник выбрал [%s] , соответственно вы ходите [%s]\n", enemy, player);
+        int roundNumber = 1;
 
         while (true) {
 
-            player_move_pack = infoReceiver.ReceiveInfoPlayerMove(round_number);
-            player_char = player_move_pack[0].charAt(0);
-            row = Integer.parseInt(player_move_pack[1]);
-            line = Integer.parseInt(player_move_pack[2]);
-            gameTable.acceptUserInput(player_char, row, line);
+            playerMovePack = infoReceiver.ReceiveInfoPlayerMove();
+            playerChar = playerMovePack[0].charAt(0);
+            row = Integer.parseInt(playerMovePack[1]);
+            line = Integer.parseInt(playerMovePack[2]);
+            gameTable.acceptUserInput(playerChar, row, line);
 
 
-            if (checkRules(enemy, round_number)) {
+            if (checkRules(enemy, roundNumber)) {
                 break;
             } else {
-                System.out.println("\nПротивник [" + enemy + "] сделал ход\n");
+                System.out.printf("\nПротивник [%s] сделал ход\n", enemy);
             }
-            round_number++;
+            roundNumber++;
 
-            lanPlayerMove(player, enemy_ip_address, round_number);
-            if (checkRules(player, round_number)) {
+            lanPlayerMove(player, enemyIpAddress);
+            if (checkRules(player, roundNumber)) {
                 break;
             }
             gameTable.showGameTable();
-            round_number++;
+            roundNumber++;
         }
     }
 
-    private void roboMove(char player, int round_number) {
-        System.out.println("\n.....ROBO [" + player + "] сделал свой ход! (о_-).....\n");
+    private void roboMove(char player, int roundNumber) {
+        System.out.printf("\n.....ROBO [%s] сделал свой ход! (о_-).....\n", player);
         gameTable.useRoboBrain(player);
-        gameHistory.writeToHistory(gameTable.getGameTable(), round_number);
+        gameHistory.writeToHistory(gameTable.getGameTable(), roundNumber);
         gameTable.showGameTable();
     }
 
-    private void playerMove(char player, int round_number) {
+    private void playerMove(char player, int roundNumber) {
 
-        System.out.println("\nХод игрока [" + player + "]\n");
+        System.out.printf("\nХод игрока [%s]\n", player);
 
         while (true) {
 
             gameTable.showGameTable();
-            int row_number = userInterface.getRowInput();
-            int line_number = userInterface.getLineInput();
+            int rowInput = userInterface.getRowInput();
+            int lineInput = userInterface.getLineInput();
 
-            if (gameTable.checkUserInput(row_number, line_number)) {
+            if (gameTable.checkUserInput(rowInput, lineInput)) {
 
-                gameTable.acceptUserInput(player, row_number, line_number);
-                gameHistory.writeToHistory(gameTable.getGameTable(), round_number);
-                System.out.println("\nИгрок [" + player + "] сделал совой ход\n");
+                gameTable.acceptUserInput(player, rowInput, lineInput);
+                gameHistory.writeToHistory(gameTable.getGameTable(), roundNumber);
+                System.out.printf("\nИгрок [%s] сделал совой ход\n", player);
                 gameTable.showGameTable();
                 break;
             }
         }
     }
 
-    private void lanPlayerMove(char player, String ip_address, int port_index) {
+    private void lanPlayerMove(char player, String ipAddress) {
 
-        System.out.println("Ход игрока [" + player + "]");
+        System.out.printf("Ход игрока [%s]\n", player);
 
         while (true) {
 
             gameTable.showGameTable();
-            int row_number = userInterface.getRowInput();
-            int line_number = userInterface.getLineInput();
+            int rowInput = userInterface.getRowInput();
+            int lineInput = userInterface.getLineInput();
 
-            if (gameTable.checkUserInput(row_number, line_number)) {
+            if (gameTable.checkUserInput(rowInput, lineInput)) {
 
-                gameTable.acceptUserInput(player, row_number, line_number);
-                infoSender.SendInfoPlayerMove(ip_address, port_index, player, row_number, line_number);
+                gameTable.acceptUserInput(player, rowInput, lineInput);
+                infoSender.SendInfoPlayerMove(ipAddress, player, rowInput, lineInput);
                 break;
             }
         }
     }
 
-    private boolean checkRules(char player, int round_number) {
-
-        final int MAX_ROUND_NUMBER = 9;
+    private boolean checkRules(char player, int roundNumber) {
 
         if (gameTable.checkGameTable(player)) {
-            System.out.println("Игрок [" + player + "] выиграл!");
+            System.out.printf("Игрок [%s] выиграл!\n", player);
             return true;
-        } else if (round_number == MAX_ROUND_NUMBER) {
+        } else if (roundNumber == MAX_ROUND_NUMBER) {
             gameTable.showGameTable();
             System.out.println("Ничья!");
             return true;
@@ -247,13 +243,4 @@ public class GameMechanics {
         }
     }
 
-    public char switchPlayer(char prev_player) {
-        char next_player;
-        if (prev_player == 'X') {
-            next_player = 'O';
-        } else {
-            next_player = 'X';
-        }
-        return next_player;
-    }
 }

@@ -2,30 +2,30 @@ package game;
 
 public class ArrayMethods {
 
-    public final static int ROW_LENGTH = 3;
-    public final static int LINE_LENGTH = 3;
+    private final static int ROW_LENGTH = 3;
+    private final static int LINE_LENGTH = 3;
     private final static int NO_MORE_EMPTY_CELLS = 5;
-    public final static char DEFAULT_VALUE = ' ';
+    private final static char DEFAULT_VALUE = ' ';
 
-    public char[][] game_table = new char[ROW_LENGTH][LINE_LENGTH];
+    public char[][] gameTable = new char[ROW_LENGTH][LINE_LENGTH];
 
-    private int[] line_1_cells = {0, 0, 0, 1, 0, 2};
-    private int[] line_2_cells = {1, 0, 1, 1, 1, 2};
-    private int[] line_3_cells = {2, 0, 2, 1, 2, 2};
-    private int[] row_1_cells = {0, 0, 1, 0, 2, 0};
-    private int[] row_2_cells = {0, 1, 1, 1, 2, 1};
-    private int[] row_3_cells = {0, 2, 1, 2, 2, 2};
-    private int[] diag_1_cells = {0, 0, 1, 1, 2, 2};
-    private int[] diag_2_cells = {2, 0, 1, 1, 0, 2};
+    private int[] line1Cells = {0, 0, 0, 1, 0, 2};
+    private int[] line2Cells = {1, 0, 1, 1, 1, 2};
+    private int[] line3Cells = {2, 0, 2, 1, 2, 2};
+    private int[] row1Cells = {0, 0, 1, 0, 2, 0};
+    private int[] row2Cells = {0, 1, 1, 1, 2, 1};
+    private int[] row3Cells = {0, 2, 1, 2, 2, 2};
+    private int[] diag1Cells = {0, 0, 1, 1, 2, 2};
+    private int[] diag2Cells = {2, 0, 1, 1, 0, 2};
 
-    private int[][] game_table_cells = {line_1_cells, line_2_cells, line_3_cells,
-                                        row_1_cells, row_2_cells, row_3_cells,
-                                        diag_1_cells, diag_2_cells};
+    private int[][] gameTableCells = {line1Cells, line2Cells, line3Cells,
+            row1Cells, row2Cells, row3Cells,
+            diag1Cells, diag2Cells};
 
     public void clearGameTable() {
         for (int i=0; i < ROW_LENGTH; i++) {
             for (int j = 0; j < LINE_LENGTH; j++) {
-                game_table[i][j] = DEFAULT_VALUE;
+                gameTable[i][j] = DEFAULT_VALUE;
             }
         }
     }
@@ -34,28 +34,28 @@ public class ArrayMethods {
         System.out.println("    1   2   3");
         System.out.println("  -------------");
         for (int i=0; i < ROW_LENGTH; i++) {
-            System.out.println((i+1) + " | " + game_table[i][0] + " | " + game_table[i][1] + " | " + game_table[i][2] + " |");
+            System.out.println((i+1) + " | " + gameTable[i][0] + " | " + gameTable[i][1] + " | " + gameTable[i][2] + " |");
             System.out.println("  -------------");
         }
         System.out.println();
     }
 
     public char[][] getGameTable() {
-        char[][] get_table = new char[ROW_LENGTH][LINE_LENGTH];
+        char[][] getTable = new char[ROW_LENGTH][LINE_LENGTH];
         for (int i=0; i < ROW_LENGTH; i++) {
             for (int j = 0; j < LINE_LENGTH; j++) {
-                get_table[i][j] = game_table[i][j];
+                getTable[i][j] = gameTable[i][j];
             }
         }
-        return get_table;
+        return getTable;
     }
 
-    public void setGame_table(char[][] new_game_table) {
-        game_table = new_game_table;
+    public void setGameTable(char[][] newGameTable) {
+        gameTable = newGameTable;
     }
 
     public boolean checkUserInput(int row, int line) {
-        if (game_table[row][line] != DEFAULT_VALUE) {
+        if (gameTable[row][line] != DEFAULT_VALUE) {
             System.out.println("Ячейка уже занята, пожалуйста выберете другую ячейку!");
             return false;
         } else {
@@ -64,7 +64,7 @@ public class ArrayMethods {
     }
 
     public void acceptUserInput(char playerChar, int row, int line) {
-        game_table[row][line] = playerChar;
+        gameTable[row][line] = playerChar;
     }
 
     public boolean checkGameTable(char playerChar) {
@@ -72,12 +72,12 @@ public class ArrayMethods {
         return checkDiagonals(playerChar) || checkLines(playerChar) || checkRows(playerChar);
     }
 
-    public boolean checkRows(char playerChar) {
+    private boolean checkRows(char playerChar) {
         boolean result = false;
         for (int i=0; i < ROW_LENGTH; i++) {
-            if (game_table[i][0] == playerChar
-                    && game_table[i][0] == game_table[i][1]
-                    && game_table[i][0] == game_table[i][2]) {
+            if (gameTable[i][0] == playerChar
+                    && gameTable[i][0] == gameTable[i][1]
+                    && gameTable[i][0] == gameTable[i][2]) {
                 result = true;
                 break;
             }
@@ -89,12 +89,12 @@ public class ArrayMethods {
         return result;
     }
 
-    public boolean checkLines(char playerChar) {
+    private boolean checkLines(char playerChar) {
         boolean result = false;
         for (int j=0; j < LINE_LENGTH; j++) {
-            if (game_table[0][j] == playerChar
-                    && game_table[0][j] == game_table[1][j]
-                    && game_table[0][j] == game_table[2][j]) {
+            if (gameTable[0][j] == playerChar
+                    && gameTable[0][j] == gameTable[1][j]
+                    && gameTable[0][j] == gameTable[2][j]) {
                 result = true;
                 break;
             }
@@ -103,15 +103,15 @@ public class ArrayMethods {
         return result;
     }
 
-    public boolean checkDiagonals(char playerChar) {
-        if (game_table[1][1] == playerChar
-                && game_table[1][1] == game_table[0][0]
-                && game_table[1][1] == game_table[2][2]) {
+    private boolean checkDiagonals(char playerChar) {
+        if (gameTable[1][1] == playerChar
+                && gameTable[1][1] == gameTable[0][0]
+                && gameTable[1][1] == gameTable[2][2]) {
             return true;
         }
-        else if (game_table[1][1] == playerChar
-                    && game_table[1][1] == game_table[0][2]
-                    && game_table[1][1] == game_table[2][0]) {
+        else if (gameTable[1][1] == playerChar
+                    && gameTable[1][1] == gameTable[0][2]
+                    && gameTable[1][1] == gameTable[2][0]) {
             return true;
         }
         else {
@@ -120,70 +120,70 @@ public class ArrayMethods {
     }
 
     // ИИ
-    public void useRoboBrain(char player_char) {
+    public void useRoboBrain(char playerChar) {
 
-        boolean win_index = false;
+        boolean winIndex = false;
 
         // Сразу пробует походить в центр
-        if (!superRoboMove(player_char)) {
+        if (!superRoboMove(playerChar)) {
             // Если центр занят, начинает просчитывать вес каждой строки\ряда\диагонали
-            int line_0_index = readLineIndex(0, player_char);
-            int line_1_index = readLineIndex(1, player_char);
-            int line_2_index = readLineIndex(2, player_char);
-            int row_0_index = readRowIndex(0, player_char);
-            int row_1_index = readRowIndex(1, player_char);
-            int row_2_index = readRowIndex(2, player_char);
-            int diag_1_index = readFirstDiagonalIndex(player_char);
-            int diag_2_index = readSecondDiagonalIndex(player_char);
+            int line0Index = readLineIndex(0, playerChar);
+            int line1Index = readLineIndex(1, playerChar);
+            int line2Index = readLineIndex(2, playerChar);
+            int row0Index = readRowIndex(0, playerChar);
+            int row1Index = readRowIndex(1, playerChar);
+            int row2Index = readRowIndex(2, playerChar);
+            int diag1Index = readFirstDiagonalIndex(playerChar);
+            int diag2Index = readSecondDiagonalIndex(playerChar);
 
 /*
-            System.out.println(line_0_index + " " + line_1_index + " " + line_2_index);
-            System.out.println(row_0_index + " " + row_1_index + " " + row_2_index);
-            System.out.println(diag_1_index + " " + diag_2_index);
+            System.out.println(line0Index + " " + line1Index + " " + line2Index);
+            System.out.println(row0Index + " " + row1Index + " " + row2Index);
+            System.out.println(diag1Index + " " + diag2Index);
 */
 
-            int[] game_table_index = {line_0_index, line_1_index, line_2_index,
-                    row_0_index, row_1_index, row_2_index,
-                    diag_1_index, diag_2_index};
+            int[] gameTableIndex = {line0Index, line1Index, line2Index,
+                    row0Index, row1Index, row2Index,
+                    diag1Index, diag2Index};
 
             // Если находит выиграшный ход - ходит туда
-            for (int k = 0; k < game_table_index.length; k++) {
-                if (game_table_index[k] == 2) {
-                    roboMove(game_table_cells[k], player_char);
-                    win_index = true;
+            for (int k = 0; k < gameTableIndex.length; k++) {
+                if (gameTableIndex[k] == 2) {
+                    roboMove(gameTableCells[k], playerChar);
+                    winIndex = true;
                     break;
                 }
             }
 
             // Если нет, ищет самое уязвимое место (наименьший вес), и ходит туда
-            if (!win_index) {
-                int min_index = 0;
-                for (int i = 1; i < game_table_index.length; i++) {
-                    if (game_table_index[i] < game_table_index[min_index]) {
-                        min_index = i;
+            if (!winIndex) {
+                int minIndex = 0;
+                for (int i = 1; i < gameTableIndex.length; i++) {
+                    if (gameTableIndex[i] < gameTableIndex[minIndex]) {
+                        minIndex = i;
                     }
                 }
 
-                roboMove(game_table_cells[min_index], player_char);
+                roboMove(gameTableCells[minIndex], playerChar);
             }
         }
     }
 
-    private void roboMove(int[] cells, char player_char) {
+    private void roboMove(int[] cells, char playerChar) {
 
         for (int i = 0, j = 1; i <= 4; i = i + 2, j = j + 2) {
-            if (game_table[cells[i]][cells[j]] == DEFAULT_VALUE) {
-                game_table[cells[i]][cells[j]] = player_char;
+            if (gameTable[cells[i]][cells[j]] == DEFAULT_VALUE) {
+                gameTable[cells[i]][cells[j]] = playerChar;
                 break;
             }
         }
 
     }
 
-    private boolean superRoboMove(char player_char) {
+    private boolean superRoboMove(char playerChar) {
 
-        if (game_table[1][1] == DEFAULT_VALUE) {
-            game_table[1][1] = player_char;
+        if (gameTable[1][1] == DEFAULT_VALUE) {
+            gameTable[1][1] = playerChar;
             return true;
         } else {
             return false;
@@ -191,110 +191,110 @@ public class ArrayMethods {
 
     }
 
-    private int readLineIndex(int line_number, char player_char) {
+    private int readLineIndex(int lineNumber, char playerChar) {
 
-        int line_index = 0;
-        int empty_cell = 0;
+        int lineIndex = 0;
+        int emptyCell = 0;
 
-        char enemy_char = switchPlayer(player_char);
+        char enemyChar = switchPlayer(playerChar);
 
         for (int i = 0; i < ROW_LENGTH; i++) {
-            if (game_table[line_number][i] == player_char) {
-                line_index++;
-            } else if (game_table[line_number][i] == enemy_char) {
-                line_index--;
+            if (gameTable[lineNumber][i] == playerChar) {
+                lineIndex++;
+            } else if (gameTable[lineNumber][i] == enemyChar) {
+                lineIndex--;
             } else {
-                empty_cell++;
+                emptyCell++;
             }
         }
 
-        if (empty_cell > 0) {
-            return line_index;
+        if (emptyCell > 0) {
+            return lineIndex;
         } else {
             return NO_MORE_EMPTY_CELLS;
         }
     }
 
-    private int readRowIndex(int row_number, char player_char) {
+    private int readRowIndex(int rowNumber, char playerChar) {
 
-        int row_index = 0;
-        int empty_cell = 0;
+        int rowIndex = 0;
+        int emptyCell = 0;
 
-        char enemy_char = switchPlayer(player_char);
+        char enemy_char = switchPlayer(playerChar);
 
         for (int i = 0; i < LINE_LENGTH; i++) {
-            if (game_table[i][row_number] == player_char) {
-                row_index++;
-            } else if (game_table[i][row_number] == enemy_char) {
-                row_index--;
+            if (gameTable[i][rowNumber] == playerChar) {
+                rowIndex++;
+            } else if (gameTable[i][rowNumber] == enemy_char) {
+                rowIndex--;
             } else {
-                empty_cell++;
+                emptyCell++;
             }
         }
 
-        if (empty_cell > 0) {
-            return row_index;
+        if (emptyCell > 0) {
+            return rowIndex;
         } else {
             return NO_MORE_EMPTY_CELLS;
         }
     }
 
-    private int readFirstDiagonalIndex(char player_char) {
+    private int readFirstDiagonalIndex(char playerChar) {
 
-        int diagonal_index = 0;
-        int empty_cell = 0;
+        int diagonalIndex = 0;
+        int emptyCell = 0;
 
-        char enemy_char = switchPlayer(player_char);
+        char enemyChar = switchPlayer(playerChar);
 
         for (int i = 0, j = 0; i < ROW_LENGTH; i++, j++) {
-            if (game_table[i][j] == player_char) {
-                diagonal_index++;
-            } else if (game_table[i][j] == enemy_char) {
-                diagonal_index--;
+            if (gameTable[i][j] == playerChar) {
+                diagonalIndex++;
+            } else if (gameTable[i][j] == enemyChar) {
+                diagonalIndex--;
             } else {
-                empty_cell++;
+                emptyCell++;
             }
         }
 
-        if (empty_cell > 0) {
-            return diagonal_index;
+        if (emptyCell > 0) {
+            return diagonalIndex;
         } else {
             return NO_MORE_EMPTY_CELLS;
         }
     }
 
-    private int readSecondDiagonalIndex(char player_char) {
+    private int readSecondDiagonalIndex(char playerChar) {
 
-        int diagonal_index = 0;
-        int empty_cell = 0;
+        int diagonalIndex = 0;
+        int emptyCell = 0;
 
-        char enemy_char = switchPlayer(player_char);
+        char enemyChar = switchPlayer(playerChar);
 
         for (int i = ROW_LENGTH - 1, j = 0; i >= 0; i--, j++) {
-            if (game_table[i][j] == player_char) {
-                diagonal_index++;
-            } else if (game_table[i][j] == enemy_char) {
-                diagonal_index--;
+            if (gameTable[i][j] == playerChar) {
+                diagonalIndex++;
+            } else if (gameTable[i][j] == enemyChar) {
+                diagonalIndex--;
             } else {
-                empty_cell++;
+                emptyCell++;
             }
         }
 
-        if (empty_cell > 0) {
-            return diagonal_index;
+        if (emptyCell > 0) {
+            return diagonalIndex;
         } else {
             return NO_MORE_EMPTY_CELLS;
         }
     }
 
-    public char switchPlayer(char prev_player) {
-        char next_player;
-        if (prev_player == 'X') {
-            next_player = 'O';
+    public char switchPlayer(char prevPlayer) {
+        char nextPlayer;
+        if (prevPlayer == 'X') {
+            nextPlayer = 'O';
         } else {
-            next_player = 'X';
+            nextPlayer = 'X';
         }
-        return next_player;
+        return nextPlayer;
     }
 
 }

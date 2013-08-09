@@ -1,6 +1,8 @@
 package ui;
 
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class UserInterface {
 
@@ -9,6 +11,12 @@ public class UserInterface {
     private final static int ARRAY_ADJUSTMENT_NUMBER = 1;
     private final static int MIN_PLAYERS_NUMBER = 1;
     private final static int MAX_PLAYERS_NUMBER = 2;
+
+    private static final String IP_PATTERN =
+            "^([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
+                    "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
+                    "([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\." +
+                    "([01]?\\d\\d?|2[0-4]\\d|25[0-5])$";
 
     public boolean getMode() {
 
@@ -20,20 +28,20 @@ public class UserInterface {
     }
 
     public boolean askYesNo(String message) {
-        String user_input;
+        String userInput;
         boolean answer;
 
         System.out.println("\n" + message +
                  "\n....Ожидание ввода....[Y/N]  [Д/Н]?");
 
         while (true) {
-            Scanner sc = new Scanner(System.in);
-            if(sc.hasNext()) {
-                user_input = sc.next().toLowerCase();
-                if (user_input.equals("y") || user_input.equals("д")) {
+            Scanner scanner = new Scanner(System.in);
+            if(scanner.hasNext()) {
+                userInput = scanner.next().toLowerCase();
+                if (userInput.equals("y") || userInput.equals("д")) {
                     answer = true;
                     break;
-                } else  if(user_input.equals("n") || user_input.equals("н")) {
+                } else  if(userInput.equals("n") || userInput.equals("н")) {
                     answer = false;
                     break;
                 } else {
@@ -49,38 +57,49 @@ public class UserInterface {
 
     public String getIpAddress() {
 
-        String user_ip_input;
+        String userIpInput;
 
         while (true) {
-            Scanner sc = new Scanner(System.in);
-            if(sc.hasNext()) {
-                user_ip_input = sc.next();
-                break;
+            Scanner scanner = new Scanner(System.in);
+            if(scanner.hasNext()) {
+                userIpInput = scanner.next();
+                if (ipValidate(userIpInput)) {
+                    break;
+                } else {
+                    System.out.println("Неверный ввод!");
+                }
             } else {
                 System.out.println("Неверный ввод!");
 
             }
         }
 
-        return user_ip_input;
+        return userIpInput;
+    }
+
+    public static boolean ipValidate(final String ip){
+
+        Pattern pattern = Pattern.compile(IP_PATTERN);
+        Matcher matcher = pattern.matcher(ip);
+        return matcher.matches();
     }
 
     public char getPlayer() {
 
-        String user_input;
+        String userInput;
         char player;
 
         System.out.println("Первый игрок выбирает чем ходить!\n" +
                 "....Введите.... [X/O]?");
 
         while (true) {
-            Scanner sc = new Scanner(System.in);
-            if(sc.hasNext()) {
-                user_input = sc.next().toLowerCase();
-                if (user_input.equals("x") || user_input.equals("х")) {
+            Scanner scanner = new Scanner(System.in);
+            if(scanner.hasNext()) {
+                userInput = scanner.next().toLowerCase();
+                if (userInput.equals("x") || userInput.equals("х")) {
                     player = 'X';
                     break;
-                } else  if(user_input.equals("o") || user_input.equals("0") || user_input.equals("о")) {
+                } else  if(userInput.equals("o") || userInput.equals("0") || userInput.equals("о")) {
                     player = 'O';
                     break;
                 } else {
@@ -110,13 +129,13 @@ public class UserInterface {
 
     public int getInput(int min, int max) {
 
-        int user_input;
+        int userInput;
 
         while (true) {
-            Scanner sc = new Scanner(System.in);
-            if(sc.hasNextInt()) {
-                user_input = sc.nextInt();
-                if (user_input >= min && user_input <= max) {
+            Scanner scanner = new Scanner(System.in);
+            if(scanner.hasNextInt()) {
+                userInput = scanner.nextInt();
+                if (userInput >= min && userInput <= max) {
                     break;
                 } else {
                     System.out.println("Неверный ввод!");
@@ -126,6 +145,6 @@ public class UserInterface {
 
             }
         }
-        return user_input;
+        return userInput;
     }
 }
